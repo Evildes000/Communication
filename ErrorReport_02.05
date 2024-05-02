@@ -1,0 +1,16 @@
+
+Problem describtion: in ns3-3.34,programms only in scratch folder can be executed, other examples are diabled. 
+
+/usr/bin/ld: lib/libns3.34-wifi-debug.so: undefined reference to `ns3::LocalClock::LocalClock()'
+/usr/bin/ld: lib/libns3.34-wifi-debug.so: undefined reference to `ns3::LocalClock::GetLocalTime()'
+/usr/bin/ld: lib/libns3.34-wifi-debug.so: undefined reference to `ns3::LocalClock::GetTypeId()'
+/usr/bin/ld: lib/libns3.34-wifi-debug.so: undefined reference to `typeinfo for ns3::LocalClock'
+
+above is the errors after configuring nad building by the command:
+./waf configure --build-profile=debug --enable-examples --enable-tests --disable-werror --cxx-standard=-std=c++17
+./waf build
+
+Suggestions: 
+1. implement all virtual functions in base class
+2. make sure deconstructor in base class is virtual
+3. Implement virtual deconstructor in your new class
