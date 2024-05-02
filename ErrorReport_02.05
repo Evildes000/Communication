@@ -14,3 +14,8 @@ Suggestions:
 1. implement all virtual functions in base class
 2. make sure deconstructor in base class is virtual
 3. Implement virtual deconstructor in your new class
+
+Reason for 2: Assuming that we have a base class A, class B is derived from base class A. If we use new to create
+a B class object pointer and delete it later, the deconstructor of class B will not be execuated, which could lead
+to memory leak. For that reason, make sure all deconstructors are virtual.(If there is polymorphism, better make the 
+method virtual). 
