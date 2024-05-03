@@ -5,8 +5,9 @@ Problem describtion: in ns3-3.34,programms only in scratch folder can be execute
 /usr/bin/ld: lib/libns3.34-wifi-debug.so: undefined reference to `ns3::LocalClock::GetLocalTime()'
 /usr/bin/ld: lib/libns3.34-wifi-debug.so: undefined reference to `ns3::LocalClock::GetTypeId()'
 /usr/bin/ld: lib/libns3.34-wifi-debug.so: undefined reference to `typeinfo for ns3::LocalClock'
+ld returns with status -1
 
-above is the errors after configuring nad building by the command:
+above is the errors after configuring and building by the command:
 ./waf configure --build-profile=debug --enable-examples --enable-tests --disable-werror --cxx-standard=-std=c++17
 ./waf build
 
@@ -14,8 +15,12 @@ Suggestions:
 1. implement all virtual functions in base class
 2. make sure deconstructor in base class is virtual
 3. Implement virtual deconstructor in your new class
+ld returns with status -1 is a link error
 
 Reason for 2: Assuming that we have a base class A, class B is derived from base class A. If we use new to create
 a B class object pointer and delete it later, the deconstructor of class B will not be execuated, which could lead
 to memory leak. For that reason, make sure all deconstructors are virtual.(If there is polymorphism, better make the 
 method virtual). 
+
+try: make deconstructor of class ClockModel virtual.
+get the same error while compiling. 
