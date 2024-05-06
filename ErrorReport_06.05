@@ -9,3 +9,5 @@ Solution: File end with .h.in means a corrresponding header file will be generat
 inlude path problem
 Solution: this error occurs because the author forgot to add path of version.h to include(ns3) folder.  
 
+3. in fortiss version ns3-3.34, in directory src/doc/deprecated-example.h:
+
