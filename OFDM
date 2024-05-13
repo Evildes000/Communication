@@ -1,0 +1,111 @@
+% OFDM Parameters
+
+N = 64;                     % Number of subcarriers
+
+B = 20e6;                   % Bandwidth in Hz (20 GHz)
+
+T = 1/B;                    % Width of the pulse derived from the highest frequency
+
+f0 = 0;                     % Starting frequency (baseband)
+
+L = N;                      % Number of time-shifts equals number of subcarriers
+
+Fs = 2*B;                   % Sampling frequency, at least twice the bandwidth (Nyquist)
+
+dt = 1/Fs;                  % Time step
+
+t = -N*T:dt:N*T;            % Time vector to cover all subcarrier interactions
+
+df = Fs/length(t);          % Frequency resolution
+
+f = -Fs/2:df:Fs/2-df;       % Frequency vector
+
+
+
+% Create and store different time-shifted rectangular pulses
+
+rect = cell(1, L+1);
+
+for l = 0:L
+
+    rect{l+1} = rectpuls(t - l*T, T);
+
+end
+
+
+
+% Generate a matrix of complex random vectors Ck,l
+
+Ckl = ones(N+1 , L+1);
+
+%Ckl = randn(N+1, L+1) + 1j*randn(N+1, L+1);
+
+
+
+% Pre-allocate a cell array to store the results
+
+mod_rect = cell(N+1, L+1);
+
+
+% Initialize the sum array
+
+total_sum = zeros(size(t));
+
+% Nested loop for frequency and time shifts
+
+for K = 0:N
+
+    fk = K*B/N;  % Subcarrier frequency
+
+    for l = 0:L
+
+        mod_rect{K+1, l+1} = Ckl(K+1, l+1) * rect{l+1} .* exp(1j*2*pi*fk*t);
+
+        total_sum = total_sum + mod_rect{K+1, l+1};
+
+    end
+
+end
+
+tx = total_sum;
+
+fx = fftshift(fft(tx));
+
+
+
+% Plotting the time domain and frequency domain
+
+figure;
+
+subplot(2, 1, 1);
+
+plot(t, real(tx));  % Plot real part of the total modulated signal
+
+title('Time Domain - OFDM Signal with Random Complex Coefficients');
+
+xlabel('Time (s)');
+
+ylabel('Amplitude');
+
+
+
+subplot(2, 1, 2);
+
+plot(f, abs(fx));
+
+title('Frequency Domain - Magnitude of Fourier Transform of OFDM Signal');
+
+xlabel('Frequency (Hz)');
+
+ylabel('Magnitude');
+
+
+% Enhance visibility of the figures
+
+set(gcf, 'Color', 'w');  % Set background to white
+
+function y = rectpuls(x, w)
+
+    y = double(abs(x) <= w/2);
+
+end
