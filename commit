@@ -1,0 +1,109 @@
+#15.05
+
+in mac-rx-midlle.h:
+add:
+typedef Callback<void, Ptr<WifiMacQueueElem>> forwardUpCallback;(WifiMacQueueEtem-->WifiMacQueueElem)
+defined forwardUpCallback new_m_callback;
+declaration void MacRxMiddle::SetForwardCallback(forwardUpCallback callback);
+in mac-rx-midlle.cc:
+void MacRxMiddle::SetForwardCallback(forwardUpCallback callback)
+{
+    NS_LOG_FUNCTION_NOARGS();
+    new_m_callback = callback;
+}
+
+ 
+
+in txop.h:
+add: 
+typedef Callback <void, WifiMacDropReason, Ptr<const WifiMacQueueElem>> droppedMpdu;(WifiMacQueueEtem-->WifiMacQueueElem)
+defined droppedMpdu new_m_droppedMpduCallback;
+declaration void Txop::SetDroppedMpduCallback(droppedMpdu callback)
+in txop.cc:
+void Txop::SetDroppedMpduCallback (droppedMpdu callback)
+{
+  NS_LOG_FUNCTION (this << &callback);
+  new_m_droppedMpduCallback = callback;
+  m_queue->TraceConnectWithoutContext ("DropBeforeEnqueue",
+                                       new_m_droppedMpduCallback.Bind (WIFI_MAC_DROP_FAILED_ENQUEUE));
+  m_queue->TraceConnectWithoutContext ("Expired",
+                                       new_m_droppedMpduCallback.Bind (WIFI_MAC_DROP_EXPIRED_LIFETIME));
+}
+
+
+in wifi-tx-timer.h:
+add:
+typedef Callback<void, uint8_t, Ptr<const WifiMacQueueElem>, const WifiTxVector&> mpduResponseTimeout;(WifiMacQueueEtem-->WifiMacQueueElem)
+defined mutable mpduResponseTimeout new_m_mpduResponseTimeoutCallback;
+declaration void WifiTxTimer::SetMpduResponseTimeoutCallback (mpduResponseTimeout callback) const
+
+#---------------------------------------------------------------------------
+in frame-exchange-manager.h:
+add:
+typedef Callback <void, WifiMacDropReason, Ptr<const WifiMacQueueElem>> droppedMpdu;(WifiMacQueueEtem-->WifiMacQueueElem)
+typedef Callback <void, Ptr<const WifiMacQueueElem>> ackedMpdu;
+
+defined droppedMpdu new_m_droppedMpduCallback;
+
+
+declaration void FrameExchangeManager::SetDroppedMpduCallback (droppedMpdu callback);
+declaration void FrameExchangeManager::SetAckedMpduCallback (ackedMpdu callback);
+
+in frame-exchange-manager.cc:
+void FrameExchangeManager::SetDroppedMpduCallback (droppedMpdu callback)
+{
+  NS_LOG_FUNCTION (this << &callback);
+  new_m_droppedMpduCallback = callback;
+}
+
+void
+FrameExchangeManager::SetAckedMpduCallback(AckedMpdu callback)
+{
+    NS_LOG_FUNCTION(this << &callback);
+    m_ackedMpduCallback = callback;
+}
+
+#--------------------------------------------------------------------
+in qos-txop.h:
+add:
+Ptr<QosFrameExchangeManager> m_qosFem; 
+declaration void SetQosFrameExchangeManager (const Ptr<QosFrameExchangeManager> qosFem);
+
+in qos-txop.cc:
+add:
+void QosTxop::SetQosFrameExchangeManager (const Ptr<QosFrameExchangeManager> qosFem)
+{
+  NS_LOG_FUNCTION (this << qosFem);
+  m_qosFem = qosFem;
+}
+
+#--------------------------------------------------------------------
+in txop.h:
+add:
+declaration virtual void Txop::SetWifiRemoteStationManager (const Ptr<WifiRemoteStationManager> remoteManager)
+define Ptr<WifiRemoteStationManager> m_stationManager;
+
+in txop.cc: 
+add:
+void
+Txop::SetWifiRemoteStationManager (const Ptr<WifiRemoteStationManager> remoteManager)
+{
+  NS_LOG_FUNCTION (this << remoteManager);
+  m_stationManager = remoteManager;
+}
+
+#---------------------------------------------------------------------
+in ht-capabilities.h:
+add:
+declaration void HtCapabilities::SetHtSupported (uint8_t htSupported)
+define uint8_t m_htSupported;
+
+in ht-capabilities.cc:
+add:
+void HtCapabilities::SetHtSupported (uint8_t htSupported)
+{
+  m_htSupported = htSupported;
+}
+
+
+
