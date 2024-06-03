@@ -22,7 +22,7 @@ uint32_t nAp = 2;
 
 int main(int argc, char* argv[]){
 
-
+//hello how are you
     ns3::CommandLine cmd;
     cmd.AddValue("nWifi1","nummber of staWifiNodes in iss 1",nWifi1);
     cmd.AddValue("nWifi2","nummber of staWifiNodes in iss 2",nWifi2);
